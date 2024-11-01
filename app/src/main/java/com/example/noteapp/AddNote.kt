@@ -37,8 +37,13 @@ fun NoteScreen(navController: NavController, notes: MutableList<Note>) {
     ) {
 
         TextField(
+            maxLines = 1,
             value = title,
-            onValueChange = { title = it },
+            onValueChange = {
+                if (it.length <= 25) {  // Set the character limit here
+                    title = it
+                }
+            },
             label = { Text("Title") }
         )
         TextField(
