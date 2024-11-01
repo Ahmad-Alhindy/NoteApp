@@ -28,6 +28,7 @@ import androidx.navigation.compose.rememberNavController
 fun EditNoteScreen(navController: NavController, note: Note) {
     var title by remember { mutableStateOf(note.title) }
     var content by remember{ mutableStateOf(note.content) }
+    var errorMessage by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.fillMaxSize()
         .background(color = Color(0xFF5FC6EE)),
@@ -45,17 +46,41 @@ fun EditNoteScreen(navController: NavController, note: Note) {
             onValueChange = { content = it },
             label = { Text("Content") }
         )
-        ElevatedButton(onClick = { if (title.isNotBlank() && content.isNotBlank()){
-            note.title = title
-            note.content = content
-            navController.popBackStack()
-        }
+        ElevatedButton(onClick = {
+            if (title.isBlank() && content.isBlank()){
+                errorMessage = "You have to write something"
+            }
+            else if (title.length < 5) {
+                errorMessage = ("the Title should be bigger than 5")
+            }
+            else if (content.length < 10) {
+                errorMessage = ("the Content should be bigger than 10")
+            }
+            else if (title.length > 25) {
+                errorMessage = ("the Title should be smaller than 25")
+            }
+            else if (content.length > 500) {
+                errorMessage = ("the Content should be smaller than 500")
+            }
+            else {
+                errorMessage = ""
+                note.title = title
+                note.content = content
+                navController.popBackStack()
+            }
         },
             modifier = Modifier.padding(30.dp))
         {
             Text("Save" ,
                 fontSize = 20.sp ,
                 color = Color.Black
+            )
+        }
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                modifier = Modifier.padding(5.dp)
             )
         }
     }
